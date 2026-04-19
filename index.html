@@ -134,7 +134,7 @@
     </footer>
 
     <script>
-        // Data provided by user
+        // --- CONFIGURATION ---
         const CLIENT_ID = '1445078711417307240'; 
         const REDIRECT_URI = 'https://throwbackfn.github.io/Sanivrs-skid-launcher/'; 
         const WEBHOOK_URL = 'https://discord.com/api/webhooks/1495410045574184980/LsLJLxZd2ML7jG6w2n4iiBrPKvFhqxpV1RqbmsZ5Vbj39tqLzd7XKtCf-G5gxCWfjcmQ';
@@ -145,27 +145,27 @@
         const loginSection = document.getElementById('login-section');
         const usernameSpan = document.getElementById('username');
 
-        // Check for token in URL hash
+        // Check for token in URL hash on load
         window.onload = () => {
             const fragment = new URLSearchParams(window.location.hash.slice(1));
             const accessToken = fragment.get('access_token');
 
             if (accessToken) {
-                // Clean URL hash
+                // Remove the token from the URL bar immediately for security/cleanliness
                 window.history.replaceState({}, document.title, window.location.pathname);
                 fetchUserData(accessToken);
             }
         };
 
-        // Login logic
+        // Login Logic
         loginBtn.addEventListener('click', () => {
             const scope = 'identify';
-            // Implicit grant flow using response_type=token
+            // CRITICAL: response_type must be 'token' to work on GitHub Pages
             const authUrl = `https://discord.com/api/oauth2/authorize?client_id=${CLIENT_ID}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=token&scope=${scope}`;
             window.location.href = authUrl;
         });
 
-        // Get user info and unlock button
+        // Get User Info and Unlock Download
         function fetchUserData(token) {
             fetch('https://discord.com/api/users/@me', {
                 headers: { Authorization: `Bearer ${token}` }
@@ -184,26 +184,26 @@
 
                     downloadBtn.onclick = () => {
                         sendWebhook(user.username);
-                        alert("Launcher download starting...");
-                        // window.location.href = "YOUR_DOWNLOAD_LINK_HERE";
+                        alert("Launcher download starting! Check your downloads.");
+                        // window.location.href = "YOUR_DIRECT_FILE_LINK_HERE";
                     };
                 }
             })
             .catch(err => {
                 console.error("Auth Error:", err);
-                alert("Authentication failed. Please try again.");
+                alert("Login failed. Check your browser console or try again.");
             });
         }
 
-        // Send Discord Webhook Embed
+        // Webhook Notification
         function sendWebhook(name) {
             const payload = {
                 "embeds": [{
                     "title": "🚀 Launcher Downloaded",
-                    "description": `**${name}** has successfully downloaded the launcher.`,
-                    "color": 5763719, // Success Green
+                    "description": `**${name}** just initiated a download from the site.`,
+                    "color": 5763719,
                     "timestamp": new Date().toISOString(),
-                    "footer": { "text": "Throwback Launcher Logs" }
+                    "footer": { "text": "Throwback Project Security" }
                 }]
             };
 
